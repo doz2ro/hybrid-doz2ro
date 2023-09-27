@@ -1,92 +1,267 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<style>
-  .container {
-    border: 1px solid black;
-    padding: 10px;
-    display: flex;
-    flex-direction: row; /* 영역 1과 영역 2를 가로로 배치합니다. */
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기본화면</title>
+    <style>
+      *{
+        margin: 0px;
+        padding: 0px;
+      }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .div1 {
+            width: 100%;
+            max-width: 1000px;
+            height: 150px;
+            background-color: #f0f0f0;
+        }
+        .div1_2{
+        width: 600px;
+        height: 150px;
+        text-align: center;
+        float: left;
+        }
 
-  .area1 {
-    flex: 1; /* 영역 1이 남은 공간을 모두 차지하도록 합니다. */
-    margin-right: 10px; /* 영역 1과 영역 2 사이의 간격을 조정합니다. */
-  }
+        .div2 {
+            width: 20%;
+            height: 300px;
+            background-color: #e0e0e0;
+        }
 
-  .area2 {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
-  }
-
-  .button-container button {
-    width: 100px;
-    height: 30px;
-  }
-
-
-  .area3 {
-    flex: 1; /* 영역 3이 남은 공간을 모두 차지하도록 합니다. */
-  }
-</style>
-<script>
-  function login() {
-    var id = document.getElementById("idInput").value;
-    var nickname = "사용자 닉네임";
-    var profilePicture = "프로필 사진 URL";
-    var loginButton = document.getElementById("loginButton");
-
-    if (id) {
-      document.getElementById("nickname").innerText = nickname;
-      document.getElementById("profilePicture").src = profilePicture;
-      loginButton.innerText = "로그아웃";
-      loginButton.setAttribute("onclick", "logout()");
-    }
-  }
-
-  function logout() {
-    document.getElementById("idInput").value = "";
-    document.getElementById("nickname").innerText = "";
-    document.getElementById("profilePicture").src = "";
-    var loginButton = document.getElementById("loginButton");
-    loginButton.innerText = "로그인";
-    loginButton.setAttribute("onclick", "login()");
-  }
-
-  function displayContent(button) {
-    var content = button.innerText + "의 내용";
-    document.getElementById("content").innerText = content;
-  }
-
-  function moveContent(button) {
-    var content = button.innerText + "의 내용";
-    document.getElementById("content").innerText = content;
-    button.innerText = "";
-  }
-</script>
+        .div3 {
+          width: 80%;
+          height: 300px;
+          background-color: #d0d0d0;
+        }
+        .password
+      {
+        padding-top: 60px;
+      }
+      #profileImage{
+    width: 250px;
+    height: 250px;
+}
+#userInfo{
+    position: absolute;
+    left: 400px;
+    top: 100px;
+}
+    </style>
 </head>
 <body>
-
-<div class="container">
-  <div class="area1">
-    <input type="text" id="idInput" placeholder="아이디">
-    <button onclick="login()" id="loginButton">로그인</button>
-    <div id="nickname"></div>
-    <img id="profilePicture" src="" alt="프로필 사진">
-  </div>
-
-  <div class="area2">
-    <button onclick="displayContent(this)">버튼1</button>
-    <button onclick="displayContent(this)">버튼2</button>
-    <button onclick="displayContent(this)">버튼3</button>
-  </div>
-
-  <div class="area3">
-    <div id="content"></div>
-  </div>
-</div>
-
+    <div class="container">
+        <div class="div1">
+          <div class="div1_2">
+          <label for="username">아이디:</label>
+          <input type="text" id="username" name="username">
+          <label for="password">비밀번호:</label>
+          <input type="password" id="password" name="password">
+          <button id="loginButton" type="button">로그인</button>
+          <button id="logoutButton" type="button" style="display: none;">로그아웃</button>
+        </div>
+        <div id="userInfo" style="display: none;">
+          <p id="nickname"></p>
+          <img id="profileImage" src="2993.png" alt="프로필 사진">
+      </div>
+      </div>
+        <div class="div2">
+          <p class="btn1" onclick="addTest()">버튼1</p><br><br>
+          <p class="btn2" onclick="addTest()">버튼2</p><br><br>
+          <p class="btn3" onclick="addTest()">버튼3</p>
+        </div>
+        <div class="div3">
+          <div class="third"></div>
+        </div>
+    </div>
 </body>
+<script>
+  const userData = {
+            username: 'do5995',
+            password: '1234',
+            nickname: 'Doz2ro'
+        };
+    
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const userInfoContainer = document.getElementById('userInfo');
+        const nicknameParagraph = document.getElementById('nickname');
+    
+        loginButton.addEventListener('click', function () {
+    const enteredUsername = usernameInput.value;
+    const enteredPassword = passwordInput.value;
+
+    if (enteredUsername === userData.username && enteredPassword === userData.password) {
+        // 로그인 성공
+        showUserInfo();
+    } 
+    else {
+        // 로그인 실패
+        alert('아이디 또는 비밀번호가 잘못되었습니다.');
+    }
+    });
+
+    logoutButton.addEventListener('click', function () {
+        // 로그아웃
+        hideUserInfo();
+        showLoginFields(); // 아이디와 비밀번호 입력 상자를 다시 나타내는 함수 호출
+    });
+
+    function showUserInfo() {
+        usernameInput.style.display = 'none'; // 아이디 입력 상자 숨기기
+        passwordInput.style.display = 'none'; // 비밀번호 입력 상자 숨기기
+        loginButton.style.display = 'none';
+        logoutButton.style.display = 'inline-block';
+        userInfoContainer.style.display = 'block';
+        nicknameParagraph.textContent = '닉네임: ' + userData.nickname;
+
+        // 아이디와 비밀번호 레이블 숨기기
+        document.querySelector('label[for="username"]').style.display = 'none';
+        document.querySelector('label[for="password"]').style.display = 'none';
+    }
+
+
+    function hideUserInfo() {
+        loginButton.style.display = 'inline-block';
+        logoutButton.style.display = 'none';
+        userInfoContainer.style.display = 'none';
+        nicknameParagraph.textContent = '';
+    }
+
+    function showLoginFields() {
+        usernameInput.style.display = 'inline-block'; // 아이디 입력 상자 나타내기
+        passwordInput.style.display = 'inline-block'; // 비밀번호 입력 상자 나타내기
+        usernameInput.value = ''; // 아이디 입력 상자 초기화
+        passwordInput.value = ''; // 비밀번호 입력 상자 초기화
+        document.querySelector('label[for="username"]').style.display = 'inline-block'; // 아이디 레이블 나타내기
+        document.querySelector('label[for="password"]').style.display = 'inline-block'; // 비밀번호 레이블 나타내기
+    }       
+    var btn1Content = "";
+var btn2Content = "";
+var btn3Content = "";
+var btn3Clicked = false; // 버튼 3을 클릭했는지 여부를 저장하는 변수
+var popupDiv = document.createElement("div"); // 팝업을 생성할 div 엘리먼트
+var div3 = document.querySelector(".div3");
+
+function closePopup() {
+    popupDiv.style.display = "none"; // 팝업을 숨김
+}
+
+function showPopup(message) {
+    // 팝업을 보여주는 함수
+    popupDiv.innerHTML = message;
+    popupDiv.style.display = "block"; // 팝업을 보이도록 설정
+
+    // 팝업을 클릭했을 때 닫도록 이벤트 리스너 추가
+    popupDiv.addEventListener("click", function () {
+        closePopup();
+    });
+}
+
+function stealContent() {
+    if (btn1Content !== "" || btn2Content !== "") {
+        btn3Content = btn1Content + "<br>" + btn2Content;
+       
+        // 훔친 내용을 삭제
+        btn1Content = "";
+        btn2Content = "";
+
+        // "저장되었습니다" 메시지를 생성
+        var savedMessage = "저장되었습니다.";
+
+        // btn3Content에 "저장되었습니다" 메시지를 추가
+        if (btn3Content !== "") {
+            btn3Content += "<br>" + savedMessage;
+        } else {
+            btn3Content = savedMessage;
+        }
+
+        btn3Clicked = true; // 버튼 3을 클릭한 상태로 설정
+    } else {
+        showPopup("내용이 없습니다.");
+    }
+   
+    // btn3Content를 div3에 출력
+    div3.innerHTML = btn3Content; // 영역3에 버튼3의 내용 출력
+
+    // 클릭되지 않은 버튼의 내용을 영역 3에 표시
+    if (!btn3Clicked) {
+        if (event.target.className === "btn1") {
+            div3.innerHTML = btn1Content;
+        } else if (event.target.className === "btn2") {
+            div3.innerHTML = btn2Content;
+        }
+    }
+}
+
+
+
+
+function addTest() {
+    // 클릭된 버튼의 클래스 이름을 확인
+    var clickedButtonClass = event.target.className;
+    var div = document.createElement("div");
+
+    if (clickedButtonClass === "btn1") {
+        // btn1을 클릭한 경우
+        if (popupDiv.style.display === "block") {
+            // 팝업이 열려있을 때
+            btn1Content = "";
+            div3.innerHTML = "";
+            closePopup(); // 팝업 닫기
+        } else if (btn3Clicked) {
+            // 팝업이 열리지 않은 상태에서 버튼 1을 누른 경우
+            alert("내용이 없습니다.");
+        } else {
+            div.textContent = "201727034 허도영입니다.";
+            btn1Content = div.textContent;
+            div.className = "third btn1-content";
+            div3.innerHTML += "<br>" + div.textContent; // 추가할 때 줄 바꿈
+        }
+    } else if (clickedButtonClass === "btn2") {
+        // btn2를 클릭한 경우
+        if (popupDiv.style.display === "block") {
+            // 팝업이 열려있을 때
+            btn2Content = "";
+            div3.innerHTML = "";
+            closePopup(); // 팝업 닫기
+        } else if (btn3Clicked) {
+            // 팝업이 열리지 않은 상태에서 버튼 2를 누른 경우
+            alert("내용이 없습니다.");
+        } else {
+            div.textContent = "하이브리드앱 이은석 교수님";
+            btn2Content = div.textContent;
+            div.className = "third btn2-content";
+            div3.innerHTML += "<br>" + div.textContent; // 추가할 때 줄 바꿈
+        }
+    } else if (clickedButtonClass === "btn3") {
+        // btn3를 클릭한 경우
+        stealContent();
+    }
+}
+
+
+
+
+
+
+// 초기화 함수
+function init() {
+    // btn3를 클릭했을 때 stealContent() 함수 호출
+    document.querySelector(".btn3").addEventListener("click", stealContent);
+}
+
+// 초기화 함수 호출
+init();
+
+</script>
 </html>
