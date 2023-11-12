@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뱀 게임</title>
+<style>
+  canvas {
+    border: 1px solid black;
+  }
+</style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="600" height="600"></canvas>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+
+      let snakeX = canvas.width / 2;
+      let snakeY = canvas.height / 2;
+      let bodyParts = [];
+      let obstacles = [];
+      let foodX = Math.random() * (canvas.width - 40) + 20;
+      let foodY = Math.random() * (canvas.height - 40) + 20;
+      let isAccelerated = false;
+      let obstacleSpeed = 1; // 장애물 이동 속도
+
+      bodyParts.push({x: snakeX, y: snakeY});
+
+      function drawSnake() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        bodyParts.forEach((part, index) => {
+          ctx.beginPath();
+          ctx.arc(part.x, part.y, 20, 0, Math.PI * 2);
+          ctx.fillStyle = index === 0 ? "green" : "blue";
+          ctx.fill();
+          ctx.closePath();
+        });
+
+        ctx.beginPath();
+        ctx.arc(foodX, foodY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.closePath();
+
+        obstacles.forEach(obstacle => {
+          ctx.beginPath();
+          if (obstacle.shape === "triangle") {
+            ctx.moveTo(obstacle.x, obstacle.y - 15);
+            ctx.lineTo(obstacle.x + 15, obstacle.y + 15);
+            ctx.lineTo(obstacle.x - 15, obstacle.y + 15);
+            ctx.fillStyle = "purple";
+          } else if (obstacle.shape === "square") {
+            ctx.rect(obstacle.x - 15, obstacle.y - 15, 30, 30);
+            ctx.fillStyle = "blue";
+          } else if (obstacle.shape === "circle") {
+            ctx.arc(obstacle.x, obstacle.y, 15, 0, Math.PI * 2);
+            ctx.fillStyle = "orange";
+          }
+          ctx.fill();
+          ctx.closePath();
+        });
+      }
+
+      function moveSnake(event) {
+        let dx, dy;
+        
+        if (event) {
+          dx = event.clientX - canvas.offsetLeft - bodyParts[0].x;
+          dy = event.clientY - canvas.offsetTop - bodyParts[0].y;
+        } else {
+          dx = Math.random() * 10 - 5;  // 랜덤한 속도로 이동
+          dy = Math.random() * 10 - 5;
+        }
+
+        let distance = Math.sqrt(dx*dx + dy*dy);
+        let speed = 5;
+
+        if (distance > speed) {
+          bodyParts[0].x += dx / distance * speed;
+          bodyParts[0].y += dy / distance * speed;
+        }
+
+        for (let i = bodyParts.length - 1; i > 0; i--) {
+          bodyParts[i].x = bodyParts[i - 1].x;
+          bodyParts[i].y = bodyParts[i - 1].y;
+        }
+
+        // Check if snake ate the food
+        const distanceToFood = Math.sqrt((bodyParts[0].x - foodX)**2 + (bodyParts[0].y - foodY)**2);
+        if (distanceToFood < 20) {
+          bodyParts.push({x: bodyParts[bodyParts.length-1].x, y: bodyParts[bodyParts.length-1].y});
+          foodX = Math.random() * (canvas.width - 40) + 20;
+          foodY = Math.random() * (canvas.height - 40) + 20;
+        }
+
+        // Check for collision with obstacles
+        obstacles.forEach(obstacle => {
+          const distanceToObstacle = Math.sqrt((bodyParts[0].x - obstacle.x)**2 + (bodyParts[0].y - obstacle.y)**2);
+          if (distanceToObstacle < 35) {
+            alert("게임 종료!");
+            location.reload();
+          }
+        });
+      }
+
+      document.addEventListener("mousemove", moveSnake);
+
+      function accelerateSnake() {
+        isAccelerated = true;
+        bodyParts.push({x: bodyParts[bodyParts.length-1].x, y: bodyParts[bodyParts.length-1].y});
+      }
+
+      window.addEventListener("click", accelerateSnake);
+
+      function spawnObstacle() {
+        let x = Math.random() < 0.5 ? -15 : canvas.width + 15;
+        let y = Math.random() * canvas.height;
+        let shape = Math.random() < 0.33 ? "triangle" : (Math.random() < 0.5 ? "square" : "circle");
+
+        let obstacle = {x, y, shape};
+        obstacles.push(obstacle);
+
+        setTimeout(() => {
+          obstacles = obstacles.filter(item => item !== obstacle);
+          spawnObstacle();
+        }, Math.random() * 3000 + 1000);
+      }
+
+      spawnObstacle();
+
+      function updateObstacles() {
+        obstacles.forEach(obstacle => {
+          // Check if obstacle is not touching snake
+          let touchingSnake = false;
+          bodyParts.forEach(part => {
+            const distance = Math.sqrt((part.x - obstacle.x)**2 + (part.y - obstacle.y)**2);
+            if (distance < 35) {
+              touchingSnake = true;
+            }
+          });
+
+          if (!touchingSnake) {
+            switch (obstacle.shape) {
+              case "triangle":
+                obstacle.x += obstacleSpeed;
+                break;
+              case "square":
+                obstacle.y += obstacleSpeed;
+                break;
+              case "circle":
+                obstacle.x -= obstacleSpeed;
+                break;
+            }
+
+            if (obstacle.x < -15 || obstacle.x > canvas.width + 15 || obstacle.y < -15 || obstacle.y > canvas.height + 15) {
+              obstacle.x = Math.random() < 0.5 ? -15 : canvas.width + 15;
+              obstacle.y = Math.random() * canvas.height;
+            }
+          }
+        });
+
+        requestAnimationFrame(updateObstacles);
+      }
+
+      updateObstacles();
+
+      function gameLoop() {
+        drawSnake();
+        requestAnimationFrame(gameLoop);
+      }
+
+      gameLoop();
+    });
+  </script>
+</body>
+</html>
